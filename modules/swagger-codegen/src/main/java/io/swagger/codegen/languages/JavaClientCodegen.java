@@ -177,6 +177,7 @@ public class JavaClientCodegen extends AbstractJavaCodegen
 
         // google-api-client doesn't use the Swagger auth, because it uses Google Credential directly (HttpRequestInitializer)
         if (!("google-api-client".equals(getLibrary()) || REST_ASSURED.equals(getLibrary()))) {
+            supportingFiles.add(new SupportingFile("auth/HeaderPassThroughAuth.mustache", authFolder, "HeaderPassThroughAuth.java"));
             supportingFiles.add(new SupportingFile("auth/HttpBasicAuth.mustache", authFolder, "HttpBasicAuth.java"));
             supportingFiles.add(new SupportingFile("auth/ApiKeyAuth.mustache", authFolder, "ApiKeyAuth.java"));
             supportingFiles.add(new SupportingFile("auth/OAuth.mustache", authFolder, "OAuth.java"));

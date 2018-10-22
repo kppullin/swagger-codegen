@@ -62,6 +62,7 @@ import java.util.Map.Entry;
 import java.util.TimeZone;
 
 import {{invokerPackage}}.auth.Authentication;
+import {{invokerPackage}}.auth.HeaderPassThroughAuth;
 import {{invokerPackage}}.auth.HttpBasicAuth;
 import {{invokerPackage}}.auth.ApiKeyAuth;
 import {{invokerPackage}}.auth.OAuth;
@@ -120,10 +121,8 @@ public class ApiClient {
         setUserAgent("Java-SDK");
 
         // Setup authentications (key: authentication name, value: authentication).
-        authentications = new HashMap<String, Authentication>();{{#authMethods}}{{#isBasic}}
-        authentications.put("{{name}}", new HttpBasicAuth());{{/isBasic}}{{#isApiKey}}
-        authentications.put("{{name}}", new ApiKeyAuth({{#isKeyInHeader}}"header"{{/isKeyInHeader}}{{^isKeyInHeader}}"query"{{/isKeyInHeader}}, "{{keyParamName}}"));{{/isApiKey}}{{#isOAuth}}
-        authentications.put("{{name}}", new OAuth());{{/isOAuth}}{{/authMethods}}
+        authentications = new HashMap<String, Authentication>();
+        authentications.put("{{name}}", new HeaderPassThroughAuth());
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -248,6 +247,20 @@ public class ApiClient {
             }
         }
         throw new RuntimeException("No OAuth2 authentication configured!");
+    }
+
+    /**
+    * Helper method to set the header key name to pass through for HeaderPassThroughAuth authentication.
+    * @param headerToPassThrough the header key name to pass through
+    */
+    public void setHeaderToPassThrough(String headerToPassThrough) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof HeaderPassThroughAuth) {
+                ((HeaderPassThroughAuth) auth).setHeaderToPassThrough(headerToPassThrough);
+                return;
+            }
+        }
+        throw new RuntimeException("No HeaderPassThroughAuth authentication configured!");
     }
 
     /**
