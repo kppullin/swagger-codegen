@@ -1,0 +1,26 @@
+package {{invokerPackage}}.auth;
+
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.MultiValueMap;
+
+{{>generatedAnnotation}}
+public class HeaderPassThroughAuth implements Authentication {
+
+    private String headerToPassThrough;
+    private HttpServletRequest httpServletRequest;
+
+    public HeaderPassThroughAuth(String headerToPassThrough, HttpServletRequest httpServletRequest) {
+        this.headerToPassThrough = headerToPassThrough;
+        this.httpServletRequest = httpServletRequest;
+    }
+
+    @Override
+    public void applyToParams(MultiValueMap<String, String> queryParams, HttpHeaders headerParams) {
+        String headerValue = httpServletRequest.getHeader(headerToPassThrough);
+
+        if (headerValue != null) {
+            headerParams.set(headerToPassThrough, headerValue);
+        }
+    }
+}

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class JavaClientCodegen extends AbstractJavaCodegen
         implements BeanValidationFeatures, PerformBeanValidationFeatures,
@@ -177,10 +178,7 @@ public class JavaClientCodegen extends AbstractJavaCodegen
 
         // google-api-client doesn't use the Swagger auth, because it uses Google Credential directly (HttpRequestInitializer)
         if (!("google-api-client".equals(getLibrary()) || REST_ASSURED.equals(getLibrary()))) {
-            supportingFiles.add(new SupportingFile("auth/HttpBasicAuth.mustache", authFolder, "HttpBasicAuth.java"));
-            supportingFiles.add(new SupportingFile("auth/ApiKeyAuth.mustache", authFolder, "ApiKeyAuth.java"));
-            supportingFiles.add(new SupportingFile("auth/OAuth.mustache", authFolder, "OAuth.java"));
-            supportingFiles.add(new SupportingFile("auth/OAuthFlow.mustache", authFolder, "OAuthFlow.java"));
+            supportingFiles.add(new SupportingFile("auth/HeaderPassThroughAuth.mustache", authFolder, "HeaderPassThroughAuth.java"));
         }
         supportingFiles.add(new SupportingFile( "gradlew.mustache", "", "gradlew") );
         supportingFiles.add(new SupportingFile( "gradlew.bat.mustache", "", "gradlew.bat") );
@@ -381,6 +379,32 @@ public class JavaClientCodegen extends AbstractJavaCodegen
                     }
                 }
                 op.path = StringUtils.join(items, "/");
+            }
+        }
+
+        Map<String, Object> operations = (Map<String, Object>) objs.get("operations");
+        if (operations != null) {
+            List<CodegenOperation> ops = (List<CodegenOperation>) operations.get("operation");
+            for (CodegenOperation operation : ops) {
+                operation.allParams = operation.allParams.stream()
+                        .filter(x -> !(x.isHeaderParam && x.paramName.equalsIgnoreCase("Authorization")))
+                        .collect(Collectors.toList());
+
+                operation.headerParams = operation.headerParams.stream()
+                        .filter(x -> !(x.isHeaderParam && x.paramName.equalsIgnoreCase("Authorization")))
+                        .collect(Collectors.toList());
+
+                Iterator<CodegenParameter> allIterator = operation.allParams.iterator();
+                while (allIterator.hasNext()) {
+                    CodegenParameter param = allIterator.next();
+                    param.hasMore = allIterator.hasNext();
+                }
+
+                Iterator<CodegenParameter> headerIterator = operation.headerParams.iterator();
+                while (headerIterator.hasNext()) {
+                    CodegenParameter param = headerIterator.next();
+                    param.hasMore = headerIterator.hasNext();
+                }
             }
         }
 

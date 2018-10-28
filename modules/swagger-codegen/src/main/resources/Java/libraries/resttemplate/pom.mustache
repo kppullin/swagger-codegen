@@ -139,16 +139,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
                 <configuration>
-                    {{#java8}}
-                        <source>
-                        1.8</source>
-                        <target>1.8</target>
-                    {{/java8}}
-                    {{^java8}}
-                        <source>
-                        1.7</source>
-                        <target>1.7</target>
-                    {{/java8}}
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -215,7 +207,18 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>${spring-web-version}</version>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax-servlet-version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- JSON processing: jackson -->
@@ -239,42 +242,12 @@
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson-version}</version>
         </dependency>
-        {{#withXml}}
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson-version}</version>
+        </dependency>
 
-            <!-- XML processing: Jackson -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-xml</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-
-        {{/withXml}}
-        {{#java8}}
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-        {{/java8}}
-        {{#joda}}
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-joda</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${jodatime-version}</version>
-            </dependency>
-        {{/joda}}
-        {{#threetenbp}}
-            <dependency>
-                <groupId>com.github.joschi.jackson</groupId>
-                <artifactId>jackson-datatype-threetenbp</artifactId>
-                <version>${jackson-threetenbp-version}</version>
-            </dependency>
-        {{/threetenbp}}
 
         <!-- test dependencies -->
         <dependency>
@@ -287,14 +260,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <swagger-annotations-version>1.5.17</swagger-annotations-version>
-        <spring-web-version>4.3.9.RELEASE</spring-web-version>
+        <spring-version>5.0.9.RELEASE</spring-version>
         <jackson-version>2.8.9</jackson-version>
-        {{#joda}}
-        <jodatime-version>2.9.9</jodatime-version>
-        {{/joda}}
-        {{#threetenbp}}
-        <jackson-threetenbp-version>2.6.4</jackson-threetenbp-version>
-        {{/threetenbp}}
+        <javax-servlet-version>3.1.0</javax-servlet-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <junit-version>4.12</junit-version>
     </properties>
