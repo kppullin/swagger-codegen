@@ -31,7 +31,7 @@ public class ApiClient {
     
     private HttpHeaders defaultHeaders = new HttpHeaders();
     
-    private final String basePath;
+    private String basePath;
 
     private final RestTemplate restTemplate;
 
@@ -56,6 +56,24 @@ public class ApiClient {
 
         // Set default User-Agent.
         setUserAgent("Java-SDK");
+    }
+
+    /**
+     * Get the current base path
+     * @return String the base path
+     */
+    public String getBasePath() {
+        return basePath;
+    }
+
+    /**
+     * Set the base path, which should include the host
+     * @param basePath the base path
+     * @return ApiClient this client
+     */
+    public ApiClient setBasePath(String basePath) {
+        this.basePath = basePath;
+        return this;
     }
 
     /**
